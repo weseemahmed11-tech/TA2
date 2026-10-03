@@ -1,33 +1,46 @@
-# IT0049 Technical Formative Assessment 1
+# IT0049 Technical Formative Assessment 2
 
-## From Zero to Four Pages: Your First CodeIgniter Application
+## From Arrays to a Real Database
 
-This small CodeIgniter 4 project introduces a basic POS idea through four pages. Customer and staff records are fictional examples stored in PHP arrays. There is no database, login, or transaction system.
+This continues the four-page CodeIgniter 4 project from TFA1. The Customer Accounts and User Accounts pages now read fictional records from MySQL through CodeIgniter Models. It is a read-only learning activity, not a complete POS system.
 
-## Requirements and setup
+## Requirements
 
-This workspace contains CodeIgniter **4.7.4**. Use PHP **8.2 or newer**, Composer **2**, and the PHP `intl` and `mbstring` extensions. The framework's Composer dependencies also include `laminas/laminas-escaper` and `psr/log`.
+- PHP 8.2 or newer with `intl`, `mbstring`, and `mysqli` enabled
+- Composer 2
+- MySQL or MariaDB (XAMPP's MySQL service works locally)
 
-1. From the project root, run `composer install` to install dependencies.
-2. Copy `.env.example` to `.env` (`Copy-Item .env.example .env` in PowerShell, or `cp .env.example .env` on macOS/Linux).
-3. In `.env`, set `app.baseURL` to the local address, with a trailing slash. For the command below, use `app.baseURL = 'http://localhost:8080/'`.
-4. Run `php spark serve` from the project root and open `http://localhost:8080/`.
+## Local setup
 
-Serve the `public/` directory if using another web server. The `.env` file is ignored by Git and should not contain committed secrets. This exercise needs no database settings.
+1. Run `composer install` in the project root to install the framework dependencies, if needed.
+2. Start MySQL. Import `database/pos_tfa2.sql` into an empty server. For XAMPP on Windows, from the project root run:
 
-## Pages and how they work
+   ```powershell
+   & 'C:\xampp\mysql\bin\mysql.exe' --user=root --execute="source database/pos_tfa2.sql"
+   ```
 
-| Route | Controller method | View |
-| --- | --- | --- |
-| `/` | `Pages::index` | `app/Views/pages/home.php` |
-| `/about` | `Pages::about` | `app/Views/pages/about.php` |
-| `/customers` | `Customers::index` | `app/Views/customers/index.php` |
-| `/users` | `Users::index` | `app/Views/users/index.php` |
+   Use your own MySQL username and connection options if they differ. The script creates the `pos_tfa2` database, the exact `customers` and `users` tables, and five sample rows in each. It is a setup script for an empty database; do not re-import it over existing tables.
+3. Copy `.env.example` to `.env` if `.env` does not already exist. Set `app.baseURL` to your local URL with a trailing slash and fill in the real `database.default.*` settings. The local XAMPP setup uses `http://localhost:8080/`, host `127.0.0.1`, database `pos_tfa2`, MySQLi, and port `3306`. Set the username and password for your own MySQL installation. `.env` is ignored by Git.
+4. Run `php spark serve` and open `http://localhost:8080/`.
 
-`app/Config/Routes.php` connects each URL to a controller method. The controller prepares data and loads a view, which builds the HTML. `Customers::index` and `Users::index` each define five records in a hardcoded PHP array and pass that array to their listing view. The views use `foreach` to make the table rows. The shared header supplies navigation, and `public/css/style.css` provides basic styling.
+If using another web server, point its document root at `public/`. The four routes are `/`, `/about`, `/customers`, and `/users`.
 
-## Submission
+## How it works
 
-Submit both a [GitHub repository link](https://github.com/weseemahmed11-tech/TA1) and a link to the working hosted application. Add the hosted URL after deployment.
+`app/Config/Routes.php` sends a URL to its controller. The Customers and Users controllers call their Models, which use the configured MySQL connection to read the tables. Each controller passes its records to a view; `foreach` creates the table rows, and `esc()` escapes their displayed values. The shared header and `public/css/style.css` keep the same simple navigation and styling as TFA1.
 
-The activity says no database is involved, but its submission section also asks for a database export. Confirm with the instructor whether that item is waived for this assessment. There is no database or SQL export in this project.
+TFA1 showed a Role column on the user page. TFA2's required `users` table has no `role` field, so the TFA2 page shows only Username and Full Name. Confirm this difference with the instructor; no role data was invented.
+
+## Database export and submission
+
+`database/pos_tfa2.sql` is the importable setup script. `database/pos_tfa2_export.sql` is an export generated from the populated local database. If you need a fresh export after changing the data, run this from the project root with your own connection settings:
+
+```powershell
+& 'C:\xampp\mysql\bin\mysqldump.exe' --user=root --databases pos_tfa2 --skip-add-drop-table --result-file=database/pos_tfa2_export.sql
+```
+
+Submission checklist:
+
+- [ ] [GitHub repository](https://github.com/weseemahmed11-tech/TA1) includes the project files and database export.
+- [ ] A working hosted application URL is supplied after deployment.
+- [ ] Hosted `.env` settings use that host's database credentials and base URL; do not commit `.env`.
