@@ -1,2 +1,2 @@
 <h1>About This Project</h1>
-<p>This learning activity shows how CodeIgniter routes connect to controllers and views. The customer and user pages display static PHP arrays, so no database is needed.</p>
+<p>This learning activity shows how CodeIgniter routes connect to controllers, models, and views. The customer and user pages read sample records from a MySQL database.</p>
